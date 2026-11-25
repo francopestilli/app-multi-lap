@@ -1,6 +1,55 @@
 [![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-bl.app.209-blue.svg)](https://doi.org/10.25663/brainlife.app.209)
 
 # app-multi-lap
+
+<!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
+
+> **Segments white matter bundles in a target tractogram by solving multiple Linear Assignment Problems (multi-LAP) against example bundles from other subjects, with optional SLR registration, and outputs a WMC classification.**
+
+Supervised, example-based bundle segmentation: for each bundle of interest it takes the corresponding bundles of several example subjects, optionally registers their tractograms to the target with streamline-based linear registration (SLR), and assigns target streamlines by solving linear assignment problems in a dissimilarity space. Use it to extract named bundles (e.g. AFQ or WMA tracts) in a new subject when segmented examples exist. It needs the target tractogram and T1, plus, for each example subject, its tractogram, T1 and WMC segmentation in the same order and with matching subject IDs.
+
+| | |
+|---|---|
+| 📥 **Inputs** | `neuro/track/tck` ×2 · `neuro/anat/t1w` ×2 · `neuro/wmc` |
+| 📤 **Outputs** | `neuro/wmc` |
+| 🐳 **Container** | `brainlife/dipy:0.16.0` |
+| ⚙️ **Resources** | 16 CPUs · 31 GB memory · 10 h walltime |
+| 🔗 **Run it** | [doi.org/10.25663/brainlife.app.209](https://doi.org/10.25663/brainlife.app.209) |
+
+#### 📥 Inputs
+
+| Input | Datatype | Required | Description |
+|---|---|---|---|
+| `0` | `neuro/track/tck` | yes | Tractogram (.tck) of the target subject to segment. |
+| `1` | `neuro/anat/t1w` (acpc_aligned) | yes | ACPC-aligned T1 of the target subject, used to convert its tractogram to .trk. |
+| `2` | `neuro/wmc` | yes | WMC segmentations of the example subjects (multi), derived from their example tractograms. One per example subject, in the same order as the example tractograms and T1s; subject IDs must match. |
+| `3` | `neuro/track/tck` | yes | Tractograms (.tck) of the example subjects (multi). |
+| `4` | `neuro/anat/t1w` (acpc_aligned) | yes | ACPC-aligned T1s of the example subjects (multi). |
+
+#### 📤 Outputs
+
+| Output | Datatype | Description |
+|---|---|---|
+| `output_wmc` | `neuro/wmc` | WMC classification of the target tractogram with the segmented bundles of interest. |
+
+<details>
+<summary><b>⚙️ Parameters</b> (4)</summary>
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `k` | number | `2000` | value for k-NN to compute the superset |
+| `step_size` | number | `0.625` | step size for resampling |
+| `slr` | boolean | `true` | If false, assuming subjects already co-registered in the same space |
+| `tractID_list` | string |  | ID list of the bundles of interest, separated by commas |
+
+</details>
+
+📚 **References used by this App:**
+- Sharmin N, Olivetti E, Avesani P. White Matter Tract Segmentation as Multiple Linear Assignment Problems. Front Neurosci (2018). [doi:10.3389/fnins.2017.00754](https://doi.org/10.3389/fnins.2017.00754)
+- Avesani P, et al. The open diffusion data derivatives, brain data upcycling via integrated publishing of derivatives and reproducible open cloud services. Sci Data 6:69 (2019). [doi:10.1038/s41597-019-0073-y](https://doi.org/10.1038/s41597-019-0073-y)
+
+<!-- brainlife-app:end -->
+
 This App segments white matter bundles by solving multiple Linear Assignment Problems (LAP or multi-LAP). The method is a supervised example-based segmentation method, and thus requires multiple bundles as examples to learn from. The segmentation is performed by means of fiber correspondence across subjects by considering the shape of the fibers (i.e. by computing fiber distances).
 
 ![](lap-original.png)
